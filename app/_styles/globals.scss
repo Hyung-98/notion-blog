@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '/node_modules/normalize-scss/sass/normalize';
+
+body {
+  max-width: 1920px;
+  width: 100%;
+  position: relative;
+  margin: 0 auto 100px;
+}
+
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translateY(-100%);
+  animation: 1s headerDown 0.2s forwards;
+}
+
+@keyframes headerDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+h1,
+h2,
+h3 {
+  button {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &::before {
+      content: '▼';
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    &.toggle {
+      &::before {
+        content: '▲';
+        font-size: 1rem;
+        line-height: 1;
+      }
+    }
+  }
+}
