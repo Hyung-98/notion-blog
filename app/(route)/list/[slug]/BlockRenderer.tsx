@@ -1,9 +1,10 @@
-import React from 'react';
-import TableRenderer from './TableRenderer';
+import React from "react";
+import TableRenderer from "./TableRenderer";
+import ToggleRenderer from "./ToggleRenderer";
 
 const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
   switch (block.type) {
-    case 'paragraph':
+    case "paragraph":
       return (
         <p>
           {block.paragraph.rich_text.map((text: any, idx: number) => (
@@ -12,7 +13,7 @@ const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
         </p>
       );
 
-    case 'heading_1':
+    case "heading_1":
       return (
         <h1>
           {block.heading_1.rich_text.map((text: any, idx: number) => (
@@ -21,7 +22,7 @@ const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
         </h1>
       );
 
-    case 'heading_2':
+    case "heading_2":
       return (
         <h2>
           {block.heading_2.rich_text.map((text: any, idx: number) => (
@@ -30,7 +31,7 @@ const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
         </h2>
       );
 
-    case 'heading_3':
+    case "heading_3":
       return (
         <h2>
           {block.heading_3.rich_text.map((text: any, idx: number) => (
@@ -39,7 +40,7 @@ const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
         </h2>
       );
 
-    case 'code':
+    case "code":
       return (
         <pre>
           <code>
@@ -50,8 +51,11 @@ const BlockRenderer: React.FC<{ block: any }> = ({ block }) => {
         </pre>
       );
 
-    case 'table':
+    case "table":
       return <TableRenderer table={block} />;
+
+    case "toggle":
+      return <ToggleRenderer block={block} />;
 
     default:
       return <div>Unsupported block type: {block.type}</div>;
