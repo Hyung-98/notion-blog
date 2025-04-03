@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import BlockRenderer from './BlockRenderer';
-import useAppStore from '@/app/_types/_store/useAppStore';
-import styles from '@/app/_styles/ListDetailPage.module.scss';
+import React, { useEffect } from "react";
+import BlockRenderer from "./BlockRenderer";
+import useAppStore from "@/app/_types/_store/useAppStore";
+import styles from "@/app/_styles/ListDetailPage.module.scss";
 
 interface ListRendererProps {
   groupedBlocks: any[];
@@ -17,9 +17,9 @@ const ListRenderer: React.FC<ListRendererProps> = ({ groupedBlocks }) => {
   }, [groupedBlocks, setNotionData]);
 
   return (
-    <div className={styles.detail}>
+    <div className={`pt-10 ${styles.detail}`}>
       {groupedBlocks.map((group, index) => {
-        if (group.type === 'bulleted_list_item') {
+        if (group.type === "bulleted_list_item") {
           return (
             <ul key={index}>
               {group.items.map((item: any) => (
@@ -31,7 +31,7 @@ const ListRenderer: React.FC<ListRendererProps> = ({ groupedBlocks }) => {
               ))}
             </ul>
           );
-        } else if (group.type === 'numbered_list_item') {
+        } else if (group.type === "numbered_list_item") {
           return (
             <ol key={index}>
               {group.items.map((item: any) => (
@@ -44,12 +44,7 @@ const ListRenderer: React.FC<ListRendererProps> = ({ groupedBlocks }) => {
             </ol>
           );
         } else {
-          return (
-            <BlockRenderer
-              key={group.id}
-              block={group}
-            />
-          );
+          return <BlockRenderer key={group.id} block={group} />;
         }
       })}
     </div>

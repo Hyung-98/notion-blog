@@ -1,36 +1,33 @@
-import React from 'react';
-import { getDatabaseItems } from '@/app/_utils/notion';
-import Link from 'next/link';
+import React from "react";
+import { getDatabaseItemsCached } from "@/app/_utils/notion";
+import Link from "next/link";
 
 const ListPage = async () => {
   const databaseId = process.env.NOTION_DATABASE_ID!;
-  const database = await getDatabaseItems(databaseId);
+  const database = await getDatabaseItemsCached(databaseId);
 
   return (
-    <div className='pt-14'>
-      <ul className='flex justify-between px-4 gap-4'>
+    <div className="pt-5">
+      <ul className="flex justify-between gap-4">
         {database.map((item) => (
           <li
             key={item.id}
-            className='w-1/3 border rounded-xl'
+            className="w-1/3 border border-gray-400 rounded-xl hover:bg-slate-50 transition-all dark:hover:bg-slate-600"
           >
             <Link
               href={`/list/${item.slug}`}
-              className='w-full h-full p-3 flex flex-col gap-4 rounded-xl hover:bg-slate-300 transition-all hover:text-gray-600'
+              className="w-full h-full p-3 flex flex-col gap-4 hover:text-gray-600 dark:hover:text-gray-200"
             >
-              <h2 className='title text-lg font-bold'>{item.title}</h2>
-              <p className='date text-base'>{new Date(item.date).toLocaleString()}</p>
-              <ul className='tags flex flex-wrap gap-1'>
-                {item.tags.map((tag: any) => (
-                  <li
-                    key={tag.id}
-                    className='text-xs px-2 py-1 border rounded bg-slate-100'
-                  >
+              <h2 className="title text-lg font-bold">{item.title}</h2>
+              <p className="date text-base">{new Date(item.date).toLocaleString()}</p>
+              <ul className="tags flex flex-wrap gap-1">
+                {item.tags.map((tag: any, index: number) => (
+                  <li key={tag.id || index} className="text-xs px-2 py-1 border rounded bg-slate-100 dark:bg-slate-800">
                     #{tag.name}
                   </li>
                 ))}
               </ul>
-              <p className='description font-medium'>{item.description}</p>
+              <p className="description font-medium">{item.description}</p>
             </Link>
           </li>
         ))}
