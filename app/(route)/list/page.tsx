@@ -1,10 +1,10 @@
 import React from "react";
-import { getDatabaseItemsCached } from "@/app/_utils/notion";
+import { getDatabaseItems } from "@/app/_utils/notion";
 import Link from "next/link";
 
 const ListPage = async () => {
   const databaseId = process.env.NOTION_DATABASE_ID!;
-  const database = await getDatabaseItemsCached(databaseId);
+  const database = await getDatabaseItems(databaseId);
 
   return (
     <div className="pt-5">

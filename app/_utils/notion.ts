@@ -1,54 +1,60 @@
-import { unstable_cache } from "next/cache";
 import { Client } from "@notionhq/client";
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const notion = new Client({
+  auth: process.env.NOTION_API_KEY,
+});
 
-export const getNotionPageData = unstable_cache(
-  async (databaseId: string, slug: string) => {
-    const query = await notion.databases.query({
-      database_id: databaseId,
-      filter: {
-        property: "Slug",
-        rich_text: { equals: slug },
-      },
-    });
+/** 📘 전체 DB 항목 불러오기 */
+export const getDatabaseItems = async (databaseId: string) => {
+  const res = await notion.databases.query({
+    database_id: databaseId,
+    sorts: [{ property: "Date", direction: "descending" }],
+  });
 
-    const pageId = query.results[0]?.id;
-    if (!pageId) throw new Error(`Page not found: ${slug}`);
+  return res.results.map((page: any) => ({
+    id: page.id,
+    title: page.properties.Title.title[0]?.plain_text ?? "Untitled",
+    description: page.properties.Description.rich_text[0]?.plain_text ?? "",
+    slug: page.properties.Slug.rich_text[0]?.plain_text ?? "",
+    date: page.properties.Date.date.start,
+    tags: page.properties.Tag.multi_select ?? [],
+    cover: page.cover?.type === "external" ? page.cover.external.url : page.cover?.file?.url ?? null,
+  }));
+};
 
-    const [page, blocks] = await Promise.all([notion.pages.retrieve({ page_id: pageId }), getBlockTree(pageId)]);
+/** 🔍 slug로 Page 조회 */
+export const getPageById = async (databaseId: string, slug: string) => {
+  const res = await notion.databases.query({
+    database_id: databaseId,
+    filter: {
+      property: "Slug",
+      rich_text: { equals: slug },
+    },
+  });
 
-    return { page, blocks };
-  },
-  ["notion-page"], // 캐시 키
-  { revalidate: 60 } // ISR 60초
-);
+  if (!res.results.length) throw new Error(`Page not found: ${slug}`);
 
-const getBlockTree = async (pageId: string) => {
-  const blocks = await notion.blocks.children.list({ block_id: pageId });
-  return Promise.all(
-    blocks.results.map(async (block: any) => {
+  return res.results[0];
+};
+
+/** 📦 해당 Page의 Blocks 가져오기 (+ 하위 children 처리) */
+export const getPageBlocks = async (databaseId: string, slug: string) => {
+  const page = await getPageById(databaseId, slug);
+  const pageId = page.id;
+
+  const res = await notion.blocks.children.list({ block_id: pageId });
+
+  const blocksWithChildren = await Promise.all(
+    res.results.map(async (block: any) => {
       if (block.has_children) {
-        const children = await notion.blocks.children.list({ block_id: block.id });
+        const children = await notion.blocks.children.list({
+          block_id: block.id,
+        });
         return { ...block, children: children.results };
       }
       return block;
     })
   );
-};
 
-export const getDatabaseItemsCached = unstable_cache(
-  async (databaseId: string) => {
-    const response = await notion.databases.query({ database_id: databaseId });
-    return response.results.map((page: any) => ({
-      id: page.id,
-      title: page.properties.Title.title[0]?.plain_text || "Untitled",
-      description: page.properties.Description.rich_text[0]?.text.content || "",
-      date: page.properties.Date.date.start || "",
-      slug: page.properties.Slug.rich_text[0]?.plain_text || "",
-      tags: page.properties.Tag.multi_select || [],
-    }));
-  },
-  ["notion-database-items"],
-  { revalidate: 60 }
-);
+  return blocksWithChildren;
+};
