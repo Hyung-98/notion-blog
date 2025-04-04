@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Header from "./_components/Header";
-import GlobalLayout from "./_layout/GlobalLayout";
+import Header from "./components/Header";
+import GlobalLayout from "./layout/GlobalLayout";
 
 import "./globals.css";
-import DarkModeInitializer from "./_components/shared/DarkModeInitializer";
+import DarkModeInitializer from "./components/shared/DarkModeInitializer";
 
 const notoSansKR = localFont({
   src: [

@@ -1,5 +1,5 @@
 import React from "react";
-import { getDatabaseItems } from "@/app/_utils/notion";
+import { getDatabaseItems } from "@/app/utils/notion";
 import Link from "next/link";
 
 const ListPage = async () => {
@@ -15,7 +15,7 @@ const ListPage = async () => {
             className="w-1/3 border border-gray-400 rounded-xl hover:bg-slate-50 transition-all dark:hover:bg-slate-600"
           >
             <Link
-              href={`/list/${item.slug}`}
+              href={`/list/${item.id}`}
               className="w-full h-full p-3 flex flex-col gap-4 hover:text-gray-600 dark:hover:text-gray-200"
             >
               <h2 className="title text-lg font-bold">{item.title}</h2>
@@ -32,6 +32,12 @@ const ListPage = async () => {
           </li>
         ))}
       </ul>
+
+      <div className="flex justify-end mt-5 ">
+        <Link href="/admin/create" className="!bg-blue-500 !text-white px-4 py-2 rounded">
+          글 등록하기
+        </Link>
+      </div>
     </div>
   );
 };
